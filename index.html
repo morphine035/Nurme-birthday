@@ -418,7 +418,10 @@ function endHold(){
 }
 function blowOut(){
   blown = true;
-  candleGroup.querySelectorAll('.flame').forEach(f=> f.style.transition='opacity .3s', f.style.opacity='0');
+  candleGroup.querySelectorAll('.flame').forEach(f=> {
+    f.style.transition = 'opacity .3s';
+    f.style.opacity = '0';
+  });
   cakeHint.style.display='none';
   cakeStatus.textContent = 'ขอให้คุณมีความสุขมากๆ สมหวังทุกประการน้าา 🎉💖';
   fireConfetti(true);
