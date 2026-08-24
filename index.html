@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>สุขสันต์วันเกิด Nurmee Awae 🎂</title>
+<link href="https://fonts.googleapis.com/css2?family=Charmonman:wght@400;700&family=Mali:wght@400;500;600;700&family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<style>
+  :root{
+    --cream:#fff7ee;
+    --paper:#fffaf3;
+    --rose:#c96a7a;
+    --rose-deep:#9c4256;
+    --gold:#d3a34c;
+    --gold-soft:#eccf95;
+    --ink:#4a3038;
+    --line: rgba(74,48,56,0.14);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html,body{background:var(--cream);}
+  body{
+    font-family:'Mali','Kanit',sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;justify-content:center;align-items:flex-start;
+    padding:22px 12px 60px;
+    position:relative;
+    overflow-x:hidden;
+  }
+  #petalCanvas{
+    position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;
+  }
+  .card{
+    position:relative;z-index:1;
+    width:100%;max-width:420px;
+    background:var(--paper);
+    border-radius:26px;
+    box-shadow:0 20px 45px rgba(156,66,86,0.18), 0 2px 8px rgba(156,66,86,0.08);
+    padding:0 0 26px;
+    overflow:hidden;
+  }
+  /* ---- ribbon header ---- */
+  .ribbon{
+    background:linear-gradient(120deg,var(--rose) 0%, var(--rose-deep) 100%);
+    padding:22px 20px 34px;
+    position:relative;
+    text-align:center;
+    clip-path: polygon(0 0,100% 0,100% 88%,50% 100%,0 88%);
+  }
+  .eyebrow{
+    font-family:'Kanit',sans-serif;
+    letter-spacing:3px;
+    font-size:11px;
+    color:var(--gold-soft);
+    text-transform:uppercase;
+    font-weight:500;
+  }
+  .title{
+    font-family:'Charmonman',cursive;
+    font-size:40px;
+    color:#fff;
+    line-height:1.15;
+    margin-top:6px;
+    text-shadow:0 3px 10px rgba(0,0,0,0.15);
+  }
+  .age-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    margin-top:10px;
+    background:rgba(255,255,255,0.18);
+    border:1px solid rgba(255,255,255,0.4);
+    color:#fff;
+    padding:5px 14px;
+    border-radius:20px;
+    font-size:13px;
+    font-family:'Kanit',sans-serif;
+  }
+
+  .body-content{ padding:0 20px; display:flex; flex-direction:column; gap:22px; margin-top:-6px; }
+
+  /* ---- photo ---- */
+  .polaroid{
+    background:#fff;
+    padding:10px 10px 16px;
+    border-radius:6px;
+    box-shadow:0 10px 24px rgba(74,48,56,0.14);
+    transform:rotate(-2deg);
+    margin:0 auto;
+    width:88%;
+  }
+  .polaroid img{
+    width:100%;display:block;border-radius:2px;object-fit:cover;max-height:340px;background:var(--gold-soft);
+  }
+  .polaroid figcaption{
+    font-family:'Charmonman',cursive;
+    font-size:17px;
+    color:var(--rose-deep);
+    text-align:center;
+    margin-top:8px;
+  }
+
+  section-title, .section-label{
+    font-family:'Kanit',sans-serif;
+    font-size:12px;
+    letter-spacing:1.5px;
+    color:var(--rose-deep);
+    text-transform:uppercase;
+    font-weight:600;
+    display:flex; align-items:center; gap:8px;
+  }
+  .section-label::after{
+    content:"";flex:1;height:1px;background:var(--line);
+  }
+
+  /* ---- cake / candle interaction ---- */
+  .cake-zone{ text-align:center; padding:6px 0 2px; }
+  .cake-hint{
+    font-size:13.5px; color:var(--rose-deep); font-weight:600; margin-bottom:10px;
+    animation:pulse 1.6s infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:.65}50%{opacity:1}}
+  .cake-wrap{ position:relative; display:inline-block; width:180px; height:170px; user-select:none; touch-action:none; }
+  .progress-ring{ position:absolute; inset:0; transform:rotate(-90deg); }
+  .progress-ring circle{ fill:none; stroke-width:5; }
+  .progress-bg{ stroke:rgba(201,106,122,0.15); }
+  .progress-fg{ stroke:var(--gold); stroke-linecap:round; stroke-dasharray:415; stroke-dashoffset:415; transition:stroke-dashoffset .05s linear; }
+  #cakeStatus{
+    font-size:13.5px;color:var(--rose-deep);font-weight:600;min-height:20px;margin-top:10px;
+    font-family:'Mali',sans-serif;
+  }
+
+  /* ---- envelope / letter ---- */
+  .envelope-zone{ text-align:center; }
+  .envelope{
+    width:100%;
+    max-width:260px;
+    margin:6px auto 0;
+    cursor:pointer;
+    position:relative;
+  }
+  .env-body{
+    background:linear-gradient(180deg,#fdeef1,#fbe1e6);
+    border:1.5px solid var(--gold-soft);
+    border-radius:10px;
+    height:96px;
+    position:relative;
+    box-shadow:0 8px 18px rgba(156,66,86,0.12);
+    overflow:hidden;
+  }
+  .env-flap{
+    position:absolute; top:0; left:0; width:100%; height:100%;
+    background:linear-gradient(135deg,var(--rose) 0%, var(--rose-deep) 100%);
+    clip-path: polygon(0 0,100% 0,50% 62%);
+    transform-origin:top;
+    transition:transform .55s cubic-bezier(.5,-0.2,.3,1.4);
+  }
+  .env-body.open .env-flap{ transform:rotateX(180deg); }
+  .env-seal{
+    position:absolute; top:32%; left:50%; transform:translate(-50%,-50%);
+    width:34px;height:34px;border-radius:50%;
+    background:var(--gold); color:#fff; font-size:16px;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 3px 8px rgba(0,0,0,0.2); z-index:2;
+    transition:opacity .3s ease;
+  }
+  .env-body.open .env-seal{ opacity:0; }
+  .env-label{
+    position:absolute;bottom:8px;width:100%;text-align:center;
+    font-family:'Kanit',sans-serif; font-size:11.5px; color:var(--rose-deep); opacity:.75;
+  }
+  .letter{
+    max-height:0; overflow:hidden;
+    transition:max-height .6s ease, opacity .5s ease, margin .5s ease;
+    opacity:0;
+  }
+  .letter.show{
+    max-height:500px; opacity:1; margin-top:14px;
+  }
+  .letter-inner{
+    background:#fff; border:1px solid var(--line); border-radius:14px;
+    padding:16px 16px 14px; text-align:left; font-size:14px; line-height:1.7;
+    box-shadow:0 4px 14px rgba(74,48,56,0.06);
+  }
+  .letter-inner .to{
+    font-family:'Charmonman',cursive; font-size:19px; color:var(--rose-deep); margin-bottom:6px; display:block;
+  }
+  .letter-inner .sign{ display:block; text-align:right; margin-top:10px; font-family:'Charmonman',cursive; font-size:17px; color:var(--rose-deep); }
+
+  /* ---- scratch coupons ---- */
+  .coupons{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .coupon{
+    position:relative; border-radius:14px; overflow:hidden; height:92px;
+    border:1.5px dashed var(--gold);
+    background:#fff;
+  }
+  .coupon-reveal{
+    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:6px; gap:4px;
+    background:linear-gradient(160deg,#fff,#fff5f2);
+  }
+  .coupon-reveal .emoji{ font-size:20px; }
+  .coupon-reveal .txt{ font-size:11.5px; font-weight:600; color:var(--rose-deep); font-family:'Kanit',sans-serif; line-height:1.3; }
+  .coupon canvas{ position:absolute; inset:0; cursor:pointer; touch-action:none; }
+  .coupon-tag{
+    position:absolute; top:5px; left:7px; font-size:9px; font-family:'Kanit',sans-serif;
+    color:var(--gold); background:rgba(255,255,255,0.85); padding:1px 6px; border-radius:8px;
+    letter-spacing:.5px; z-index:3;
+  }
+
+  .footer-text{ text-align:center; font-size:11.5px; color:#b98a94; font-family:'Kanit',sans-serif; }
+
+  /* ---- surprise video modal ---- */
+  .video-modal{
+    position:fixed; inset:0; z-index:50;
+    background:rgba(74,48,56,0.55);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none;
+    transition:opacity .35s ease;
+    padding:20px;
+  }
+  .video-modal.show{ opacity:1; pointer-events:auto; }
+  .video-modal-inner{
+    position:relative;
+    width:100%; max-width:300px;
+    background:#000;
+    border-radius:22px;
+    overflow:hidden;
+    box-shadow:0 25px 60px rgba(0,0,0,0.4);
+    border:4px solid #fff;
+    transform:scale(0.85) translateY(10px);
+    transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  .video-modal.show .video-modal-inner{ transform:scale(1) translateY(0); }
+  .video-modal-inner video{
+    width:100%; display:block; max-height:70vh; background:#000;
+  }
+  .video-modal-close{
+    position:absolute; top:8px; right:8px; z-index:2;
+    width:30px;height:30px;border-radius:50%;
+    background:rgba(0,0,0,0.5); color:#fff; border:none;
+    font-size:16px; display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+  }
+  .video-modal-caption{
+    position:absolute; bottom:0; left:0; right:0;
+    padding:14px 12px 10px;
+    background:linear-gradient(0deg, rgba(0,0,0,0.65), rgba(0,0,0,0));
+    color:#fff; font-family:'Charmonman',cursive; font-size:16px; text-align:center;
+    pointer-events:none;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="petalCanvas"></canvas>
+
+<div class="card">
+  <div class="ribbon">
+    <div class="eyebrow">Happy Birthday</div>
+    <div class="title">Nurmee Awae</div>
+    <div class="age-badge">✨ ครบรอบ 22 ปี ✨</div>
+  </div>
+
+  <div class="body-content">
+
+    <figure class="polaroid">
+      <img src="image01.png" alt="Nurmee Awae" onerror="this.style.display='flex';this.style.alignItems='center';this.style.justifyContent='center';this.alt='📷 วางรูปที่ image.png';this.style.color='#c2185b';this.style.fontFamily='Kanit,sans-serif';this.style.fontSize='13px';">
+      <figcaption>วันพิเศษของ u 🌷</figcaption>
+    </figure>
+
+    <div>
+      <div class="section-label">เป่าเทียนขอพร</div>
+      <div class="cake-zone">
+        <div class="cake-hint" id="cakeHint">กดค้างที่เค้กเพื่อเป่าเทียน 🕯️</div>
+        <div class="cake-wrap" id="cakeWrap">
+          <svg class="progress-ring" width="180" height="170" viewBox="0 0 140 140">
+            <circle class="progress-bg" cx="70" cy="70" r="66"></circle>
+            <circle class="progress-fg" id="progFg" cx="70" cy="70" r="66"></circle>
+          </svg>
+          <svg id="cakeSvg" width="180" height="170" viewBox="0 0 180 170" style="position:relative;">
+            <!-- plate -->
+            <ellipse cx="90" cy="150" rx="62" ry="9" fill="#f3d6dc"/>
+            <!-- cake tiers -->
+            <rect x="35" y="108" width="110" height="34" rx="8" fill="#f9c9d6"/>
+            <rect x="35" y="108" width="110" height="10" rx="5" fill="#fff" opacity="0.55"/>
+            <rect x="50" y="80" width="80" height="30" rx="8" fill="#f2a6bb"/>
+            <rect x="50" y="80" width="80" height="9" rx="4" fill="#fff" opacity="0.5"/>
+            <rect x="65" y="56" width="50" height="26" rx="7" fill="#e8839f"/>
+            <!-- candles -->
+            <g id="candleGroup">
+              <rect x="72" y="36" width="5" height="20" rx="2" fill="#eccf95"/>
+              <rect x="89" y="32" width="5" height="24" rx="2" fill="#eccf95"/>
+              <rect x="106" y="36" width="5" height="20" rx="2" fill="#eccf95"/>
+              <g class="flame" id="flame1"><ellipse cx="74.5" cy="32" rx="4" ry="7" fill="#f7a93f"/><ellipse cx="74.5" cy="33" rx="2" ry="4" fill="#ffe08a"/></g>
+              <g class="flame" id="flame2"><ellipse cx="91.5" cy="28" rx="4" ry="7" fill="#f7a93f"/><ellipse cx="91.5" cy="29" rx="2" ry="4" fill="#ffe08a"/></g>
+              <g class="flame" id="flame3"><ellipse cx="108.5" cy="32" rx="4" ry="7" fill="#f7a93f"/><ellipse cx="108.5" cy="33" rx="2" ry="4" fill="#ffe08a"/></g>
+            </g>
+            <!-- sprinkles -->
+            <circle cx="60" cy="95" r="2.4" fill="#fff"/><circle cx="100" cy="98" r="2.4" fill="#fce18a"/>
+            <circle cx="80" cy="120" r="2.4" fill="#fff"/><circle cx="115" cy="122" r="2.4" fill="#fce18a"/>
+          </svg>
+        </div>
+        <div id="cakeStatus"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">ข้อความในใจ</div>
+      <div class="envelope-zone">
+        <div class="envelope" id="envelopeBtn">
+          <div class="env-body" id="envBody">
+            <div class="env-flap"></div>
+            <div class="env-seal">💌</div>
+            <div class="env-label">แตะเพื่อเปิดจดหมาย</div>
+          </div>
+        </div>
+        <div class="letter" id="letterBox">
+          <div class="letter-inner">
+            <span class="to">ถึง Nurmee Awae 💖</span>
+            <p>สุขสันต์วันเกิดวัย 22 ปีนะค้าบยู ขอให้วันเกิดของยูปีนี้ทำให้ยูมีรอยยิ้มที่สดใสทุกวันน ขอให้มีเรื่องราวดีๆ เข้ามาในชีวิต 
+                เป็นปีสุดท้ายของการศึกษาที่ดีให้กับยูในทุกๆด้านน่ะ ขอบคุณสำหรับทุกรอยยิ้มที่ทำให้โลกนี้น่าอยู่ขึ้นเสมอ 
+                ขอบคุณที่ยังให้โอกาสไอได้จีบอยู่อีกครั้งน่ะ จะพยายามทำให้มันดีที่สุดในทุกๆวัน ขอให้สมหวังในทุกเรื่อง รักและอยู่เคียงข้างกันแบบนี้ไปนานๆ น้าา 🥰✨</p>
+            <span class="sign">— ไอเลิฟยูววว </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">คูปองพิเศษ (ขูดเพื่อดู)</div>
+      <div class="coupons">
+        <div class="coupon" data-emoji="👑" data-txt="สั่งตามใจ 1 วัน"><span class="coupon-tag">01</span><div class="coupon-reveal"><span class="emoji">👑</span><span class="txt">สั่งตามใจ 1 วัน</span></div><canvas></canvas></div>
+        <div class="coupon" data-emoji="🤗" data-txt="กอดไอแน่นๆ ไม่จำกัด"><span class="coupon-tag">02</span><div class="coupon-reveal"><span class="emoji">🤗</span><span class="txt">กอดอุ่นๆ ไม่จำกัด</span></div><canvas></canvas></div>
+        <div class="coupon" data-emoji="🍕" data-txt="เลี้ยงของอร่อย 1 มื้อ"><span class="coupon-tag">03</span><div class="coupon-reveal"><span class="emoji">🍕</span><span class="txt">เลี้ยงของอร่อย 1 มื้อ</span></div><canvas></canvas></div>
+        <div class="coupon" data-emoji="💖" data-txt="หอมแก้มมมม"><span class="coupon-tag">04</span><div class="coupon-reveal"><span class="emoji">💖</span><span class="txt">ห้ามขัดใจ 1 วันเต็ม</span></div><canvas></canvas></div>
+      </div>
+    </div>
+
+    <div class="footer-text">Made with ❤️ for Nurmee Awae</div>
+  </div>
+</div>
+
+<div class="video-modal" id="videoModal">
+  <div class="video-modal-inner">
+    <button class="video-modal-close" id="videoModalClose">✕</button>
+    <video id="surpriseVideo" muted autoplay playsinline webkit-playsinline loop>
+      <source src="video01.mp4" type="video/mp4">
+    </video>
+    <div class="video-modal-caption">สำหรับเธอนะ 🎁</div>
+  </div>
+</div>
+
+<script>
+/* ---------- ambient falling petals ---------- */
+const canvas = document.getElementById('petalCanvas');
+const ctx = canvas.getContext('2d');
+function resize(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+resize(); addEventListener('resize', resize);
+const symbols = ['🌸','💮','✿'];
+const petals = Array.from({length:16}, () => ({
+  x: Math.random()*innerWidth,
+  y: Math.random()*-innerHeight,
+  s: 12+Math.random()*10,
+  speed: 0.4+Math.random()*0.6,
+  drift: (Math.random()-0.5)*0.6,
+  rot: Math.random()*360,
+  rotSpeed:(Math.random()-0.5)*1.2,
+  sym: symbols[Math.floor(Math.random()*symbols.length)]
+}));
+function loop(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  petals.forEach(p=>{
+    p.y += p.speed; p.x += p.drift; p.rot += p.rotSpeed;
+    if(p.y > innerHeight+20){ p.y = -20; p.x = Math.random()*innerWidth; }
+    ctx.save();
+    ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
+    ctx.globalAlpha = 0.55;
+    ctx.font = p.s+'px serif';
+    ctx.fillText(p.sym,0,0);
+    ctx.restore();
+  });
+  requestAnimationFrame(loop);
+}
+loop();
+
+/* ---------- hold-to-blow candle ---------- */
+const cakeWrap = document.getElementById('cakeWrap');
+const progFg = document.getElementById('progFg');
+const cakeHint = document.getElementById('cakeHint');
+const cakeStatus = document.getElementById('cakeStatus');
+const candleGroup = document.getElementById('candleGroup');
+const CIRC = 415;
+let holdTimer=null, progress=0, blown=false;
+
+function fireConfetti(big){
+  confetti({ particleCount: big?110:40, spread: big?75:50, origin:{y:0.6} });
+}
+function startHold(e){
+  if(blown) { fireConfetti(false); return; }
+  e.preventDefault();
+  cakeHint.style.opacity = '0.4';
+  holdTimer = setInterval(()=>{
+    progress += 4;
+    progFg.style.strokeDashoffset = CIRC - (CIRC*progress/100);
+    if(progress>=100){
+      clearInterval(holdTimer);
+      blowOut();
+    }
+  },35);
+}
+function endHold(){
+  if(blown) return;
+  clearInterval(holdTimer);
+  progress = Math.max(0, progress-15);
+  progFg.style.strokeDashoffset = CIRC - (CIRC*progress/100);
+  cakeHint.style.opacity = '';
+  if(progress<=0) progress=0;
+}
+function blowOut(){
+  blown = true;
+  candleGroup.querySelectorAll('.flame').forEach(f=> f.style.transition='opacity .3s', f.style.opacity='0');
+  cakeHint.style.display='none';
+  cakeStatus.textContent = 'ขอให้คุณมีความสุขมากๆ สมหวังทุกประการน้าา 🎉💖';
+  fireConfetti(true);
+  setTimeout(showSurpriseVideo, 500);
+}
+
+/* ---------- surprise video ---------- */
+const videoModal = document.getElementById('videoModal');
+const surpriseVideo = document.getElementById('surpriseVideo');
+const videoModalClose = document.getElementById('videoModalClose');
+function showSurpriseVideo(){
+  videoModal.classList.add('show');
+  surpriseVideo.currentTime = 0;
+  surpriseVideo.play().catch(()=>{ /* autoplay blocked, user can tap play */ });
+}
+function hideSurpriseVideo(){
+  videoModal.classList.remove('show');
+  surpriseVideo.pause();
+}
+videoModalClose.addEventListener('click', hideSurpriseVideo);
+videoModal.addEventListener('click', (e)=>{ if(e.target === videoModal) hideSurpriseVideo(); });
+cakeWrap.addEventListener('mousedown', startHold);
+cakeWrap.addEventListener('touchstart', startHold, {passive:false});
+['mouseup','mouseleave','touchend','touchcancel'].forEach(ev=>cakeWrap.addEventListener(ev, endHold));
+
+/* ---------- envelope / letter ---------- */
+const envBody = document.getElementById('envBody');
+const envelopeBtn = document.getElementById('envelopeBtn');
+const letterBox = document.getElementById('letterBox');
+let envOpen = false;
+envelopeBtn.addEventListener('click', ()=>{
+  envOpen = !envOpen;
+  envBody.classList.toggle('open', envOpen);
+  letterBox.classList.toggle('show', envOpen);
+  if(envOpen){
+    confetti({ particleCount:45, angle:60, spread:55, origin:{x:0} });
+    confetti({ particleCount:45, angle:120, spread:55, origin:{x:1} });
+  }
+});
+
+/* ---------- scratch-off coupons ---------- */
+document.querySelectorAll('.coupon').forEach(coupon=>{
+  const cvs = coupon.querySelector('canvas');
+  const cctx = cvs.getContext('2d');
+  let revealed = false;
+
+  function sizeCanvas(){
+    const rect = coupon.getBoundingClientRect();
+    cvs.width = rect.width; cvs.height = rect.height;
+    cctx.fillStyle = '#e8839f';
+    cctx.fillRect(0,0,cvs.width,cvs.height);
+    cctx.fillStyle = 'rgba(255,255,255,0.85)';
+    cctx.font = '600 12px Kanit, sans-serif';
+    cctx.textAlign = 'center';
+    cctx.fillText('ขูดตรงนี้ ✨', cvs.width/2, cvs.height/2);
+    cctx.globalCompositeOperation = 'destination-out';
+  }
+  sizeCanvas();
+
+  function scratchAt(x,y){
+    cctx.beginPath();
+    cctx.arc(x,y,16,0,Math.PI*2);
+    cctx.fill();
+  }
+  function getPos(e, rect){
+    if(e.touches && e.touches[0]) return {x:e.touches[0].clientX-rect.left, y:e.touches[0].clientY-rect.top};
+    return {x:e.clientX-rect.left, y:e.clientY-rect.top};
+  }
+  function checkCleared(){
+    const data = cctx.getImageData(0,0,cvs.width,cvs.height).data;
+    let clear=0;
+    for(let i=3;i<data.length;i+=4*20){ if(data[i]===0) clear++; }
+    if(clear/(data.length/(4*20)) > 0.5 && !revealed){
+      revealed = true;
+      cvs.style.transition='opacity .35s ease';
+      cvs.style.opacity='0';
+      setTimeout(()=>cvs.remove(),350);
+      confetti({ particleCount:35, spread:45, origin:{y:0.7} });
+    }
+  }
+  let drawing=false;
+  function onDown(e){ drawing=true; move(e); }
+  function onUp(){ drawing=false; checkCleared(); }
+  function move(e){
+    if(!drawing) return;
+    e.preventDefault();
+    const rect = cvs.getBoundingClientRect();
+    const pos = getPos(e, rect);
+    scratchAt(pos.x,pos.y);
+    checkCleared();
+  }
+  cvs.addEventListener('mousedown', onDown);
+  cvs.addEventListener('mousemove', move);
+  addEventListener('mouseup', onUp);
+  cvs.addEventListener('touchstart', onDown, {passive:false});
+  cvs.addEventListener('touchmove', move, {passive:false});
+  cvs.addEventListener('touchend', onUp);
+});
+</script>
+</body>
+</html>
