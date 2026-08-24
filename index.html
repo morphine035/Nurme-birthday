@@ -343,7 +343,7 @@
 <div class="video-modal" id="videoModal">
   <div class="video-modal-inner">
     <button class="video-modal-close" id="videoModalClose">✕</button>
-    <video id="surpriseVideo" muted autoplay playsinline webkit-playsinline loop>
+    <video id="surpriseVideo" controls preload="auto" muted autoplay playsinline webkit-playsinline loop>
       <source src="video01.mp4" type="video/mp4">
     </video>
     <div class="video-modal-caption">สำหรับเธอนะ 🎁</div>
@@ -432,6 +432,7 @@ const videoModalClose = document.getElementById('videoModalClose');
 function showSurpriseVideo(){
   videoModal.classList.add('show');
   surpriseVideo.currentTime = 0;
+  surpriseVideo.load();
   surpriseVideo.play().catch(()=>{ /* autoplay blocked, user can tap play */ });
 }
 function hideSurpriseVideo(){
